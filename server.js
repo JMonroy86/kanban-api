@@ -1,17 +1,30 @@
 const express = require("express");
 const cors = require("cors");
 const bodyParser = require("body-parser");
+const morgan = require("morgan");
+const passport = require("passport");
 require("dotenv").config();
 
+const BearerStrategy = require("passport-http-bearer");
+
+
 const app = express();
+
+app.use(morgan("dev"));
+
+const bearerStrategy = new BearerStrategy((token, done) => {
+  // Send user info using the second argument
+  done(null, {}, token);
+});
+
+app.use(passport.initialize());
+passport.use(bearerStrategy);
 
 app.use(bodyParser.json());
 
 const db = require("./app/models");
 
-db.sequelize.sync({ force: true }).then(() => {
-  console.log("Drop and re-sync db.");
-});
+db.sequelize.sync()
 
 var corsOptions = {
   origin: "http://localhost:3000",

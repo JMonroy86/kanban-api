@@ -1,17 +1,19 @@
 const config = require("../../config/auth.config");
 const db = require("../models/index");
-
+const { v4: uuidv4 } = require("uuid");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
 
 exports.signUp = async (req, res) => {
   try {
-    const { name, email, password } = req.body;
+    const id = uuidv4();
 
     const createUser = await db.users.create({
-      name: "name",
-      email: email,
-      password: bcrypt.hashSync(password, 8),
+      id: id,
+      name: "Admin",
+      email: "admin@kanbanboard.com",
+      password: bcrypt.hashSync("adminRoot", 8),
+      rolsId: 1,
     });
 
     const token = jwt.sign({ email: createUser.email }, config.secret, {
@@ -24,6 +26,7 @@ exports.signUp = async (req, res) => {
       accessToken: token,
     });
   } catch (error) {
+    console.log(error);
     res.status(500).send({
       message: error.message || "Some error occurred.",
     });

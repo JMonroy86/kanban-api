@@ -15,6 +15,7 @@ const sequelize = new Sequelize(dbConfig.DB, dbConfig.USER, dbConfig.PASSWORD, {
 const db = {};
 db.Sequelize = Sequelize;
 db.sequelize = sequelize;
+
 db.users = require("./users.model")(sequelize, Sequelize);
 db.rols = require("./rols.model")(sequelize, Sequelize);
 db.tickets = require("./tickets.model")(sequelize, Sequelize);
@@ -27,11 +28,11 @@ db.users.belongsTo(db.rols, {
   as: "rols",
 });
 db.tickets.belongsTo(db.users, {
-  ForeignKey: "creatorEmail",
+  ForeignKey: "creatorId",
   as: "creator",
 });
 db.tickets.belongsTo(db.users, {
-  ForeignKey: "assignedEmail",
+  ForeignKey: "assignedId",
   as: "assigned",
 });
 db.tickets.belongsTo(db.statu, {
