@@ -48,31 +48,38 @@ exports.signUp = async (req, res) => {
 
 exports.signIn = async (req, res) => {
   try {
-    const signInUser = await db.users.findOne({
-      where: { email: req.body.email },
-    });
-    const passwordIsValid = bcrypt.compareSync(
-      req.body.password,
-      signInUser.password
-    );
+    const { email, password } = req.body;
 
-    if (!passwordIsValid) {
+    if (email === "" || password == "") {
       return res.status(401).send({
         accessToken: null,
-        message: "Email or password wrong",
+        message: "Email or password can't be empty",
       });
-    }
+    } else {
+      const signInUser = await db.users.findOne({
+        where: { email: email },
+      });
 
-    const token = jwt.sign({ email: signInUser.email }, config.secret, {
-      expiresIn: 86400, // 24 hours
-    });
-    res.status(200).send({
-      id: signInUser.id,
-      name: signInUser.name,
-      email: signInUser.email,
-      rolsId: signInUser.rolsId,
-      accessToken: token,
-    });
+      const passwordIsValid = bcrypt.compareSync(password, signInUser.password);
+      
+      if (!passwordIsValid) {
+        return res.status(401).send({
+          accessToken: null,
+          message: "Email or password wrong",
+        });
+      } else {
+        const token = jwt.sign({ email: signInUser.email }, config.secret, {
+          expiresIn: 86400, // 24 hours
+        });
+        res.status(200).send({
+          id: signInUser.id,
+          name: signInUser.name,
+          email: signInUser.email,
+          rolsId: signInUser.rolsId,
+          accessToken: token,
+        });
+      }
+    }
   } catch (error) {
     res.status(500).send({
       message: "Email or password wrong" || "Some error occurred.",
