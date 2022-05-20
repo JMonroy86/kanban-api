@@ -12,6 +12,7 @@ module.exports = (app) => {
 
   router.post("/signUp", auth.signUp);
   router.post("/signIn", auth.signIn);
+  router.post("/createPsw", auth.createPsw);
 
   app.use("/api/auth", router);
 };
