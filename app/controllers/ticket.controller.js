@@ -3,7 +3,6 @@ const db = require("../models/index");
 
 exports.findAll = async (req, res) => {
   try {
-    
     const data = await db.tickets.findAll({
       include: [
         { model: db.users, as: "creator", attributes: ["name"] },
@@ -42,7 +41,7 @@ exports.findAll = async (req, res) => {
           a
         );
       }, []);
-      
+
       res.send(groupOfData);
     } else {
       res.send(null);
@@ -115,16 +114,26 @@ exports.create = async (req, res) => {
       creatorId,
       statusId,
     } = req.body;
-    await db.tickets.create({
-      title: title,
-      createdDate: createdDate,
-      assignedDate: assignedDate,
-      assignedId: assignedId,
-      creatorId: creatorId,
-      statusId: statusId,
-    });
+    if (title === "") {
+      return res.status(404).send({
+        message: "Task description can't be empty",
+      });
+    } else if (assignedId === "") {
+      return res.status(404).send({
+        message: "You must assign the task to a developer",
+      });
+    } else {
+      await db.tickets.create({
+        title: title,
+        createdDate: createdDate,
+        assignedDate: assignedDate,
+        assignedId: assignedId,
+        creatorId: creatorId,
+        statusId: statusId,
+      });
 
-    res.send({ message: "Task created successfully" });
+      res.status(200).send({ message: "Task created successfully" });
+    }
   } catch (error) {
     return res.send({
       message: error.message || "Some error occurred while creating the User.",
@@ -163,20 +172,27 @@ exports.update = async (req, res) => {
   try {
     const { assignedDate, assignedId, statusId } = req.body;
     const { id } = req.params;
-    await db.tickets.update(
-      {
-        assignedDate: assignedDate,
-        assignedId: assignedId,
-        statusId: statusId,
-      },
-      {
-        where: {
-          id: id,
+    console.log(assignedId);
+    if (!assignedId) {
+      return res.status(404).send({
+        message: "You must assign a developer",
+      });
+    } else {
+      await db.tickets.update(
+        {
+          assignedDate: assignedDate,
+          assignedId: assignedId,
+          statusId: statusId,
         },
-      }
-    );
+        {
+          where: {
+            id: id,
+          },
+        }
+      );
 
-    return res.send({ message: "User updated successfuly" });
+      return res.send({ message: "Task updated successfuly" });
+    }
   } catch (error) {
     return {
       message: error.message || "Some error occurred while creating the User.",
