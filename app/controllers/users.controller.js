@@ -80,7 +80,6 @@ exports.findAll = async (req, res) => {
 };
 exports.findAllDev = async (req, res) => {
   try {
-    console.log("allDevs", "hols");
     const attributes = ["id", "name", "email", "photo"];
     const allDevs = await db.users.findAll({
       where: {
@@ -101,6 +100,23 @@ exports.findOne = async (req, res) => {
   try {
     const attributes = ["id", "name", "email", "photo"];
     const userFiltered = await db.users.findOne({
+      where: {
+        id: req.params.id,
+      },
+      include: [{ model: db.rols, as: "rols", attributes: ["id"] }],
+      attributes: attributes,
+    });
+    return res.send(userFiltered);
+  } catch (error) {
+    return {
+      message: error.message || "Some error occurred while creating the User.",
+    };
+  }
+};
+exports.filterOne = async (req, res) => {
+  try {
+    const attributes = ["id", "name", "email", "photo"];
+    const userFiltered = await db.users.findAll({
       where: {
         id: req.params.id,
       },

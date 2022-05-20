@@ -11,10 +11,10 @@ module.exports = (app) => {
   router.get("/", users.findAll);
   router.get("/devs", users.findAllDev);
   router.get("/admin", users.findAdmin);
+  router.get("/filter/:id", users.filterOne);
   router.put("/:id", users.update);
   router.get("/:id", users.findOne);
   router.delete("/:id", users.deleteOne);
-  router.get("/filter/:id", users.findOne);
 
   app.use("/api/users", auth, router);
 };
