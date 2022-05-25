@@ -28,6 +28,7 @@ db.sequelize.sync()
 
 var allowedDomains = [
   "https://kanbanboard-app.azurewebsites.net",
+  "https://kanban-board.vercel.app",
   "http://localhost:3000",
 ];
 app.use(
