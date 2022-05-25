@@ -27,7 +27,7 @@ const db = require("./app/models");
 db.sequelize.sync()
 
 var allowedDomains = [
-  "https://kanbanboard-app.azurewebsites.net/",
+  "https://kanbanboard-app.azurewebsites.net",
   "http://localhost:3000",
 ];
 app.use(
